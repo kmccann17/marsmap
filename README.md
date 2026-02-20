@@ -20,11 +20,13 @@ Raster MTS tileset. The processing pipeline:
 2. Apply a Mars color ramp (GDAL `color-relief`).
 3. Expand to RGB (8‑bit).
 4. Warp to Web Mercator (EPSG:3857) for globe rendering.
-5. Publish the RGB GeoTIFF to Mapbox Raster MTS.
+5. Publish the RGB GeoTIFFs to Mapbox Raster MTS.
 
 ### Mapbox Integration
 
-- Mars mode uses the Mapbox raster tileset `kieranmccann.mars-mola`.
+- Mars mode switches between two Mapbox raster tilesets:
+  - `kieranmccann.mars-mola-contrast` (high-contrast terrain)
+  - `kieranmccann.mars-mola-red` (natural red ramp)
 - Earth mode uses Mapbox Standard to validate token setup and globe rendering.
 - When opened as a local file, the app falls back to a procedural Mars texture
   for quick offline previews.

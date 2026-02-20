@@ -5,9 +5,10 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD_DIR="${ROOT_DIR}/build"
 
 MAPBOX_USER="${MAPBOX_USER:-kieranmccann}"
-SOURCE_ID="${SOURCE_ID:-mars-mola-src}"
-TILESET_ID="${TILESET_ID:-${MAPBOX_USER}.mars-mola}"
-SOURCE_FILE="${SOURCE_FILE:-${BUILD_DIR}/mars-color-rgb-3857.tif}"
+VARIANT="${VARIANT:-contrast}"
+SOURCE_ID="${SOURCE_ID:-mars-mola-${VARIANT}-src}"
+TILESET_ID="${TILESET_ID:-${MAPBOX_USER}.mars-mola-${VARIANT}}"
+SOURCE_FILE="${SOURCE_FILE:-${BUILD_DIR}/mars-${VARIANT}-rgb-3857.tif}"
 TOKEN="${MAPBOX_SECRET_TOKEN:-}"
 
 if [ -z "${TOKEN}" ]; then
@@ -51,7 +52,7 @@ EOF
 
 cat > "${TILESET_FILE}" <<EOF
 {
-  "name": "Mars MOLA (visual imagery)",
+  "name": "Mars MOLA (${VARIANT})",
   "recipe": $(cat "${RECIPE_FILE}")
 }
 EOF
@@ -72,3 +73,4 @@ curl -sS -X POST \
   "https://api.mapbox.com/tilesets/v1/${TILESET_ID}/publish?access_token=${TOKEN}"
 
 echo "Done. Check status in Mapbox Studio tilesets."
+echo "Tileset: ${TILESET_ID}"

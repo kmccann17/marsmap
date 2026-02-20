@@ -1,10 +1,15 @@
 const tokenStatus = document.getElementById('token-status');
 const mode = new URLSearchParams(window.location.search).get('mode') || 'mars';
 const useMapboxStandard = mode === 'earth';
+const marsVariant = new URLSearchParams(window.location.search).get('mars') || 'contrast';
 const HARDCODED_TOKEN =
   'pk.eyJ1Ijoia2llcmFubWNjYW5uIiwiYSI6ImNtbHVieWExbDAweHYza3B3MzZsOG81YjUifQ.w61Q4cg-CEH-ZI2MGExlJA';
 
-const MARS_TILESET = 'mapbox://kieranmccann.mars-mola';
+const MARS_TILESETS = {
+  contrast: 'mapbox://kieranmccann.mars-mola-contrast',
+  red: 'mapbox://kieranmccann.mars-mola-red'
+};
+const marsTileset = MARS_TILESETS[marsVariant] || MARS_TILESETS.contrast;
 
 const isFileProtocol = window.location.protocol === 'file:';
 
@@ -72,7 +77,7 @@ const marsSources = isFileProtocol
   : {
       mars: {
         type: 'raster',
-        url: MARS_TILESET,
+        url: marsTileset,
         tileSize: 256,
         attribution:
           'Mars shaded relief: USGS Astrogeology Science Center / NASA MGS MOLA'
