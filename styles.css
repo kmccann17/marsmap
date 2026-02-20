@@ -1,11 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Teko:wght@500;600&display=swap');
+
+:root {
+  color-scheme: dark;
+  --ink: #0a0b10;
+  --text: #f8f2ea;
+  --muted: #d8c7b5;
+  --accent: #e07a2f;
+  --accent-soft: rgba(224, 122, 47, 0.3);
+  --glass: rgba(9, 7, 5, 0.62);
+  --glass-edge: rgba(255, 255, 255, 0.12);
+  --panel-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+
 html,
 body,
 #map {
   margin: 0;
   width: 100%;
   height: 100%;
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: #0a0f1f;
+  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+  background: radial-gradient(circle at top, #151927 0%, #0a0b10 45%, #05060a 100%);
+}
+
+body {
+  position: relative;
+  overflow: hidden;
+  color: var(--text);
+}
+
+body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.08) 0 1px, transparent 2px),
+    radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.06) 0 1px, transparent 2px),
+    radial-gradient(circle at 50% 80%, rgba(255, 255, 255, 0.06) 0 1px, transparent 2px),
+    radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.05) 0 1px, transparent 2px);
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .overlay {
@@ -14,21 +48,90 @@ body,
   left: 1rem;
   z-index: 1;
   max-width: 320px;
-  padding: 0.85rem 1rem;
-  border-radius: 12px;
-  color: #f5f5f5;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(3px);
+  padding: 1.1rem 1.1rem 1rem;
+  border-radius: 16px;
+  color: var(--text);
+  background: var(--glass);
+  border: 1px solid var(--glass-edge);
+  box-shadow: var(--panel-shadow);
+  backdrop-filter: blur(6px);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(224, 122, 47, 0.2);
+  border: 1px solid rgba(224, 122, 47, 0.35);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #f0d3b8;
 }
 
 .overlay h1 {
-  margin: 0 0 0.5rem;
-  font-size: 1.2rem;
+  margin: 0.5rem 0 0.4rem;
+  font-family: 'Teko', 'Space Grotesk', sans-serif;
+  font-size: 2rem;
+  letter-spacing: 0.03em;
 }
 
 .overlay p {
   margin: 0.35rem 0;
   line-height: 1.35;
+}
+
+.lede {
+  color: var(--muted);
+  font-size: 0.98rem;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.6rem 0 0.7rem;
+}
+
+.meta span {
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.72rem;
+  color: #f0e3d4;
+}
+
+.token-form {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.token-form input {
+  flex: 1;
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+}
+
+.token-form button {
+  padding: 0.45rem 0.7rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(224, 122, 47, 0.28);
+}
+
+.token-form button:hover {
+  background: #ed8b43;
 }
 
 .small {
@@ -39,5 +142,5 @@ body,
 code {
   padding: 0.1rem 0.25rem;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.16);
 }

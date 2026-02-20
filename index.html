@@ -10,14 +10,33 @@
   <body>
     <div id="map"></div>
     <div class="overlay">
-      <h1>Mars Globe</h1>
-      <p>
-        Mapbox globe projection with open USGS/NASA Mars raster data.
+      <div class="tag">Mars Mission · Globe Feed</div>
+      <h1>Tharsis Atlas</h1>
+      <p class="lede">
+        A mission-style viewport for the Red Planet, powered by Mapbox globe
+        rendering and USGS/NASA relief data.
       </p>
+      <div class="meta">
+        <span>Projection: Globe</span>
+        <span>Dataset: MGS MOLA</span>
+        <span>Mode: Auto-spin</span>
+      </div>
       <p class="small">
-        Add your token in <code>app.js</code> or pass
-        <code>?token=YOUR_MAPBOX_TOKEN</code> in the URL.
+        Add your token in the URL with <code>?token=YOUR_MAPBOX_TOKEN</code>,
+        or enter it below. It will be saved to localStorage. When opened as a
+        local file, a built-in Mars texture is used. Run the local server for
+        the live USGS tiles.
       </p>
+      <form id="token-form" class="token-form">
+        <input
+          id="token-input"
+          type="password"
+          placeholder="Mapbox public token (pk.*)"
+          autocomplete="off"
+        />
+        <button type="submit">Save token</button>
+      </form>
+      <p id="token-status" class="small"></p>
     </div>
 
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.js"></script>

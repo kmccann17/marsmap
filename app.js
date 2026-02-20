@@ -1,16 +1,99 @@
 const tokenFromUrl = new URLSearchParams(window.location.search).get('token');
-mapboxgl.accessToken = tokenFromUrl || 'YOUR_MAPBOX_TOKEN_HERE';
+const tokenFromStorage = localStorage.getItem('MAPBOX_PUBLIC_TOKEN');
+mapboxgl.accessToken = tokenFromUrl || tokenFromStorage || 'YOUR_MAPBOX_TOKEN_HERE';
+
+const tokenForm = document.getElementById('token-form');
+const tokenInput = document.getElementById('token-input');
+const tokenStatus = document.getElementById('token-status');
+
+if (tokenForm && tokenInput && tokenStatus) {
+  if (tokenFromStorage) {
+    tokenStatus.textContent = 'Token loaded from localStorage.';
+  }
+
+  tokenForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const value = tokenInput.value.trim();
+    if (!value) {
+      tokenStatus.textContent = 'Please enter a token.';
+      return;
+    }
+    localStorage.setItem('MAPBOX_PUBLIC_TOKEN', value);
+    mapboxgl.accessToken = value;
+    tokenInput.value = '';
+    tokenStatus.textContent = 'Token saved. Reloading map...';
+    window.location.reload();
+  });
+}
 
 const marsRasterTiles = [
   'https://planetarymaps.usgs.gov/arcgis/rest/services/Mars/Mars_MGS_MOLA_ClrShade_merge_global_463m/MapServer/tile/{z}/{y}/{x}'
 ];
 
-const map = new mapboxgl.Map({
-  container: 'map',
-  style: {
-    version: 8,
-    projection: { name: 'globe' },
-    sources: {
+const isFileProtocol = window.location.protocol === 'file:';
+
+function createMarsTextureCanvas() {
+  const canvas = document.createElement('canvas');
+  canvas.id = 'mars-canvas';
+  canvas.width = 2048;
+  canvas.height = 1024;
+  canvas.style.display = 'none';
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return canvas;
+
+  const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  gradient.addColorStop(0, '#5a2a1e');
+  gradient.addColorStop(0.45, '#8c4a2a');
+  gradient.addColorStop(0.75, '#b86b36');
+  gradient.addColorStop(1, '#6b2f1f');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const data = imageData.data;
+  for (let i = 0; i < data.length; i += 4) {
+    const noise = (Math.random() - 0.5) * 30;
+    data[i] = Math.min(255, Math.max(0, data[i] + noise));
+    data[i + 1] = Math.min(255, Math.max(0, data[i + 1] + noise * 0.6));
+    data[i + 2] = Math.min(255, Math.max(0, data[i + 2] + noise * 0.4));
+  }
+  ctx.putImageData(imageData, 0, 0);
+
+  for (let i = 0; i < 140; i += 1) {
+    const x = Math.random() * canvas.width;
+    const y = Math.random() * canvas.height;
+    const radius = 12 + Math.random() * 60;
+    const alpha = 0.08 + Math.random() * 0.15;
+    ctx.beginPath();
+    ctx.fillStyle = `rgba(40, 20, 14, ${alpha})`;
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.strokeStyle = `rgba(230, 180, 120, ${alpha * 0.6})`;
+    ctx.lineWidth = 2;
+    ctx.arc(x + radius * 0.2, y - radius * 0.1, radius * 0.55, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  return canvas;
+}
+
+const marsSources = isFileProtocol
+  ? {
+      marsCanvas: {
+        type: 'canvas',
+        canvas: createMarsTextureCanvas().id,
+        coordinates: [
+          [-180, 85],
+          [180, 85],
+          [180, -85],
+          [-180, -85]
+        ]
+      }
+    }
+  : {
       mars: {
         type: 'raster',
         tiles: marsRasterTiles,
@@ -18,12 +101,21 @@ const map = new mapboxgl.Map({
         attribution:
           'Mars shaded relief: USGS Astrogeology Science Center / NASA MGS MOLA'
       }
-    },
+    };
+
+const marsLayerSource = isFileProtocol ? 'marsCanvas' : 'mars';
+
+const map = new mapboxgl.Map({
+  container: 'map',
+  style: {
+    version: 8,
+    projection: { name: 'globe' },
+    sources: marsSources,
     layers: [
       {
         id: 'mars-raster',
         type: 'raster',
-        source: 'mars',
+        source: marsLayerSource,
         minzoom: 0,
         maxzoom: 8
       }
