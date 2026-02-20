@@ -24,6 +24,7 @@ Then open:
 
 - USGS Astrogeology / NASA MGS MOLA shaded relief tiles:
   `https://planetarymaps.usgs.gov/arcgis/rest/services/Mars/Mars_MGS_MOLA_ClrShade_merge_global_463m/MapServer`
+  (proxied through `/api/mars/{z}/{y}/{x}` to avoid CORS issues)
 
 ## Token security
 

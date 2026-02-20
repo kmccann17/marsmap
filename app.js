@@ -4,9 +4,7 @@ const useMapboxStandard = mode === 'earth';
 const HARDCODED_TOKEN =
   'pk.eyJ1Ijoia2llcmFubWNjYW5uIiwiYSI6ImNtbHVieWExbDAweHYza3B3MzZsOG81YjUifQ.w61Q4cg-CEH-ZI2MGExlJA';
 
-const marsRasterTiles = [
-  'https://planetarymaps.usgs.gov/arcgis/rest/services/Mars/Mars_MGS_MOLA_ClrShade_merge_global_463m/MapServer/tile/{z}/{y}/{x}'
-];
+const marsRasterTiles = ['/api/mars/{z}/{y}/{x}'];
 
 const isFileProtocol = window.location.protocol === 'file:';
 
