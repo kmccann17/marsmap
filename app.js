@@ -1,4 +1,6 @@
 const tokenStatus = document.getElementById('token-status');
+const mode = new URLSearchParams(window.location.search).get('mode') || 'mars';
+const useMapboxStandard = mode === 'earth';
 
 const marsRasterTiles = [
   'https://planetarymaps.usgs.gov/arcgis/rest/services/Mars/Mars_MGS_MOLA_ClrShade_merge_global_463m/MapServer/tile/{z}/{y}/{x}'
@@ -95,28 +97,41 @@ const marsLayerSource = isFileProtocol ? 'marsCanvas' : 'mars';
 function initMap(accessToken) {
   mapboxgl.accessToken = accessToken || 'YOUR_MAPBOX_TOKEN_HERE';
 
-  const map = new mapboxgl.Map({
-    container: 'map',
-    style: {
-      version: 8,
-      projection: { name: 'globe' },
-      sources: marsSources,
-      layers: [
-        {
-          id: 'mars-raster',
-          type: 'raster',
-          source: marsLayerSource,
-          minzoom: 0,
-          maxzoom: 8
+  const map = new mapboxgl.Map(
+    useMapboxStandard
+      ? {
+          container: 'map',
+          style: 'mapbox://styles/mapbox/standard',
+          zoom: 1.5,
+          center: [0, 10],
+          antialias: true
         }
-      ]
-    },
-    zoom: 1.5,
-    center: [0, 10],
-    antialias: true
-  });
+      : {
+          container: 'map',
+          style: {
+            version: 8,
+            projection: { name: 'globe' },
+            sources: marsSources,
+            layers: [
+              {
+                id: 'mars-raster',
+                type: 'raster',
+                source: marsLayerSource,
+                minzoom: 0,
+                maxzoom: 8
+              }
+            ]
+          },
+          zoom: 1.5,
+          center: [0, 10],
+          antialias: true
+        }
+  );
 
   map.on('style.load', () => {
+    if (useMapboxStandard) {
+      map.setProjection('globe');
+    }
     map.setFog({
       color: 'rgb(24, 16, 11)',
       'high-color': 'rgb(49, 30, 20)',
@@ -151,6 +166,8 @@ resolveToken().then((token) => {
   if (!token && tokenStatus && !isFileProtocol) {
     tokenStatus.textContent =
       'Mapbox token missing. Set MAPBOX_PUBLIC_TOKEN on the server.';
+  } else if (tokenStatus && useMapboxStandard && !isFileProtocol) {
+    tokenStatus.textContent = 'Mapbox Standard mode enabled.';
   }
   initMap(token);
 });
