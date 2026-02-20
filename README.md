@@ -20,11 +20,6 @@ Then open:
 
 `http://localhost:4173/`
 
-## Vercel environment variable
-
-Set `MAPBOX_PUBLIC_TOKEN` in Vercel. The app will fetch it from `/api/token`
-when running on a hosted URL. (Public token only.)
-
 ## Data source
 
 - USGS Astrogeology / NASA MGS MOLA shaded relief tiles:

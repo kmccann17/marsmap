@@ -1,25 +1,14 @@
 const tokenStatus = document.getElementById('token-status');
 const mode = new URLSearchParams(window.location.search).get('mode') || 'mars';
 const useMapboxStandard = mode === 'earth';
+const HARDCODED_TOKEN =
+  'pk.eyJ1Ijoia2llcmFubWNjYW5uIiwiYSI6ImNtbHVieWExbDAweHYza3B3MzZsOG81YjUifQ.w61Q4cg-CEH-ZI2MGExlJA';
 
 const marsRasterTiles = [
   'https://planetarymaps.usgs.gov/arcgis/rest/services/Mars/Mars_MGS_MOLA_ClrShade_merge_global_463m/MapServer/tile/{z}/{y}/{x}'
 ];
 
 const isFileProtocol = window.location.protocol === 'file:';
-
-async function resolveToken() {
-  if (isFileProtocol) return '';
-
-  try {
-    const response = await fetch('/api/token');
-    if (!response.ok) return '';
-    const data = await response.json();
-    return data.token || '';
-  } catch (err) {
-    return '';
-  }
-}
 
 function createMarsTextureCanvas() {
   const canvas = document.createElement('canvas');
@@ -162,12 +151,8 @@ function initMap(accessToken) {
   map.on('load', spinGlobe);
 }
 
-resolveToken().then((token) => {
-  if (!token && tokenStatus && !isFileProtocol) {
-    tokenStatus.textContent =
-      'Mapbox token missing. Set MAPBOX_PUBLIC_TOKEN on the server.';
-  } else if (tokenStatus && useMapboxStandard && !isFileProtocol) {
-    tokenStatus.textContent = 'Mapbox Standard mode enabled.';
-  }
-  initMap(token);
-});
+if (tokenStatus && !isFileProtocol) {
+  tokenStatus.textContent = 'Using embedded Mapbox token for this build.';
+}
+
+initMap(HARDCODED_TOKEN);
