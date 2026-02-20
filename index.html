@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mars Globe Map</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="map"></div>
+    <div class="overlay">
+      <h1>Mars Globe</h1>
+      <p>
+        Mapbox globe projection with open USGS/NASA Mars raster data.
+      </p>
+      <p class="small">
+        Add your token in <code>app.js</code> or pass
+        <code>?token=YOUR_MAPBOX_TOKEN</code> in the URL.
+      </p>
+    </div>
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.6.0/mapbox-gl.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
