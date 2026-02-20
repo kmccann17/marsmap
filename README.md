@@ -24,17 +24,24 @@ Then open:
 
 - USGS Astrogeology / NASA MGS MOLA shaded relief tiles:
   `https://planetarymaps.usgs.gov/arcgis/rest/services/Mars/Mars_MGS_MOLA_ClrShade_merge_global_463m/MapServer`
-  (proxied through `/api/mars/{z}/{y}/{x}` to avoid CORS issues)
 
 ## Mapbox tileset
 
 Mars mode uses the Mapbox raster tileset `kieranmccann.mars-mola`.
 Make sure the tileset is **public** so it can be loaded in the browser.
 
-## Build Mars PMTiles (GDAL)
+## Build Mars Raster MTS Source (GDAL)
 
-This repo includes a script to generate a Mars PMTiles file from the USGS
-MOLA shaded relief GeoTIFF.
+This repo includes a script to generate an RGB GeoTIFF from the USGS
+MOLA shaded relief that is suitable for Mapbox Raster MTS.
+
+General approach:
+
+1) Download MOLA shaded-relief GeoTIFF.
+2) Apply a Mars color ramp (GDAL color-relief).
+3) Expand to RGB uint8.
+4) Warp to EPSG:3857 (Web Mercator).
+5) Upload the RGB GeoTIFF to Raster MTS.
 
 Prereqs:
 
@@ -44,14 +51,12 @@ Prereqs:
 Run:
 
 ```bash
-./scripts/build-mars-pmtiles.sh
+./scripts/build-mars-raster-mts.sh
 ```
 
 Output:
 
 - `build/mars-color-rgb-3857.tif` (use this for Mapbox Raster MTS)
-- `build/mars.mbtiles` (use this for Mapbox Uploads API)
-- `build/mars.pmtiles`
 
 ## Mapbox Raster MTS (visual imagery)
 
@@ -74,15 +79,9 @@ Override any of these by exporting env vars before running.
 
 ## Mapbox Uploads API (MBTiles)
 
-Mapbox accepts MBTiles uploads (raster recommended at 512x512). Uploads use a
-**secret** token with `uploads:write` scope.
-
-High-level flow:
-
-1) Request temporary S3 upload credentials.
-2) Upload the MBTiles file to the provided S3 bucket.
-3) Create the upload, referencing the S3 URL and a tileset ID.
-4) Poll upload status until complete.
+If you prefer MBTiles uploads instead of Raster MTS, use the Uploads API with a
+**secret** token and a raster MBTiles file. This project currently targets
+Raster MTS for the Mars tileset.
 
 ## Token security
 

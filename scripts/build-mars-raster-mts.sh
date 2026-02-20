@@ -11,8 +11,6 @@ COLOR_RAMP="${ROOT_DIR}/scripts/mars_colorramp.txt"
 COLOR_TIF="${BUILD_DIR}/mars-color.tif"
 RGB_TIF="${BUILD_DIR}/mars-color-rgb.tif"
 WARP_TIF="${BUILD_DIR}/mars-color-rgb-3857.tif"
-MBTILES="${BUILD_DIR}/mars.mbtiles"
-PMTILES="${BUILD_DIR}/mars.pmtiles"
 
 if ! command -v gdalinfo >/dev/null 2>&1; then
   echo "GDAL is not installed (gdalinfo not found). Install GDAL first."
@@ -44,26 +42,5 @@ gdalwarp \
   "${RGB_TIF}" \
   "${WARP_TIF}"
 
-echo "Creating MBTiles (512x512 raster tiles)..."
-gdal_translate \
-  -of MBTiles \
-  -co TILE_FORMAT=PNG \
-  -co BLOCKSIZE=512 \
-  -co ZLEVEL=6 \
-  "${WARP_TIF}" \
-  "${MBTILES}"
-
-echo "Building overview zoom levels..."
-gdaladdo -r average "${MBTILES}" 2 4 8 16 32 64
-
-if ! command -v pmtiles >/dev/null 2>&1; then
-  echo "pmtiles CLI not found."
-  echo "Download the binary from: https://github.com/protomaps/go-pmtiles/releases"
-  exit 1
-fi
-
-echo "Converting MBTiles to PMTiles..."
-pmtiles convert "${MBTILES}" "${PMTILES}"
-
 echo "Done!"
-echo "PMTiles file: ${PMTILES}"
+echo "Raster MTS source file: ${WARP_TIF}"
