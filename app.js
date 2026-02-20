@@ -1,36 +1,23 @@
-const tokenFromUrl = new URLSearchParams(window.location.search).get('token');
-const tokenFromStorage = localStorage.getItem('MAPBOX_PUBLIC_TOKEN');
-mapboxgl.accessToken = tokenFromUrl || tokenFromStorage || 'YOUR_MAPBOX_TOKEN_HERE';
-
-const tokenForm = document.getElementById('token-form');
-const tokenInput = document.getElementById('token-input');
 const tokenStatus = document.getElementById('token-status');
-
-if (tokenForm && tokenInput && tokenStatus) {
-  if (tokenFromStorage) {
-    tokenStatus.textContent = 'Token loaded from localStorage.';
-  }
-
-  tokenForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-    const value = tokenInput.value.trim();
-    if (!value) {
-      tokenStatus.textContent = 'Please enter a token.';
-      return;
-    }
-    localStorage.setItem('MAPBOX_PUBLIC_TOKEN', value);
-    mapboxgl.accessToken = value;
-    tokenInput.value = '';
-    tokenStatus.textContent = 'Token saved. Reloading map...';
-    window.location.reload();
-  });
-}
 
 const marsRasterTiles = [
   'https://planetarymaps.usgs.gov/arcgis/rest/services/Mars/Mars_MGS_MOLA_ClrShade_merge_global_463m/MapServer/tile/{z}/{y}/{x}'
 ];
 
 const isFileProtocol = window.location.protocol === 'file:';
+
+async function resolveToken() {
+  if (isFileProtocol) return '';
+
+  try {
+    const response = await fetch('/api/token');
+    if (!response.ok) return '';
+    const data = await response.json();
+    return data.token || '';
+  } catch (err) {
+    return '';
+  }
+}
 
 function createMarsTextureCanvas() {
   const canvas = document.createElement('canvas');
@@ -105,53 +92,65 @@ const marsSources = isFileProtocol
 
 const marsLayerSource = isFileProtocol ? 'marsCanvas' : 'mars';
 
-const map = new mapboxgl.Map({
-  container: 'map',
-  style: {
-    version: 8,
-    projection: { name: 'globe' },
-    sources: marsSources,
-    layers: [
-      {
-        id: 'mars-raster',
-        type: 'raster',
-        source: marsLayerSource,
-        minzoom: 0,
-        maxzoom: 8
-      }
-    ]
-  },
-  zoom: 1.5,
-  center: [0, 10],
-  antialias: true
-});
+function initMap(accessToken) {
+  mapboxgl.accessToken = accessToken || 'YOUR_MAPBOX_TOKEN_HERE';
 
-map.on('style.load', () => {
-  map.setFog({
-    color: 'rgb(24, 16, 11)',
-    'high-color': 'rgb(49, 30, 20)',
-    'horizon-blend': 0.25,
-    'space-color': 'rgb(2, 2, 8)',
-    'star-intensity': 0.15
+  const map = new mapboxgl.Map({
+    container: 'map',
+    style: {
+      version: 8,
+      projection: { name: 'globe' },
+      sources: marsSources,
+      layers: [
+        {
+          id: 'mars-raster',
+          type: 'raster',
+          source: marsLayerSource,
+          minzoom: 0,
+          maxzoom: 8
+        }
+      ]
+    },
+    zoom: 1.5,
+    center: [0, 10],
+    antialias: true
   });
-});
 
-let userInteracting = false;
+  map.on('style.load', () => {
+    map.setFog({
+      color: 'rgb(24, 16, 11)',
+      'high-color': 'rgb(49, 30, 20)',
+      'horizon-blend': 0.25,
+      'space-color': 'rgb(2, 2, 8)',
+      'star-intensity': 0.15
+    });
+  });
 
-map.on('mousedown', () => {
-  userInteracting = true;
-});
-map.on('dragend', () => {
-  userInteracting = false;
-});
+  let userInteracting = false;
 
-function spinGlobe() {
-  if (!userInteracting && map.isStyleLoaded()) {
-    const center = map.getCenter();
-    center.lng -= 0.08;
-    map.easeTo({ center, duration: 80, easing: (n) => n, animate: true });
+  map.on('mousedown', () => {
+    userInteracting = true;
+  });
+  map.on('dragend', () => {
+    userInteracting = false;
+  });
+
+  function spinGlobe() {
+    if (!userInteracting && map.isStyleLoaded()) {
+      const center = map.getCenter();
+      center.lng -= 0.08;
+      map.easeTo({ center, duration: 80, easing: (n) => n, animate: true });
+    }
+    requestAnimationFrame(spinGlobe);
   }
-  requestAnimationFrame(spinGlobe);
+
+  map.on('load', spinGlobe);
 }
 
-map.on('load', spinGlobe);
+resolveToken().then((token) => {
+  if (!token && tokenStatus && !isFileProtocol) {
+    tokenStatus.textContent =
+      'Mapbox token missing. Set MAPBOX_PUBLIC_TOKEN on the server.';
+  }
+  initMap(token);
+});

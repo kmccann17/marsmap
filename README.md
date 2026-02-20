@@ -7,9 +7,7 @@ A lightweight demo that renders Mars imagery on a Mapbox globe using open USGS/N
 Option A: open directly
 
 1) Open `index.html` in your browser.
-2) Paste your public token (pk.*) into the form. It’s stored in localStorage.
-3) Refresh if needed.
-4) Note: when opened as a local file, the map uses a built-in Mars texture.
+2) Note: when opened as a local file, the map uses a built-in Mars texture.
    Run the local server for the live USGS tiles.
 
 Option B: run a local server
@@ -20,7 +18,12 @@ node server.js
 
 Then open:
 
-`http://localhost:4173/?token=YOUR_MAPBOX_TOKEN`
+`http://localhost:4173/`
+
+## Vercel environment variable
+
+Set `MAPBOX_PUBLIC_TOKEN` in Vercel. The app will fetch it from `/api/token`
+when running on a hosted URL. (Public token only.)
 
 ## Data source
 

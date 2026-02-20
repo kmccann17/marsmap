@@ -104,36 +104,6 @@ body::before {
   color: #f0e3d4;
 }
 
-.token-form {
-  display: flex;
-  gap: 0.4rem;
-  margin-top: 0.5rem;
-}
-
-.token-form input {
-  flex: 1;
-  padding: 0.45rem 0.6rem;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text);
-}
-
-.token-form button {
-  padding: 0.45rem 0.7rem;
-  border-radius: 8px;
-  border: none;
-  background: var(--accent);
-  color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(224, 122, 47, 0.28);
-}
-
-.token-form button:hover {
-  background: #ed8b43;
-}
-
 .small {
   font-size: 0.82rem;
   opacity: 0.9;

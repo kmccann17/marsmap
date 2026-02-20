@@ -22,20 +22,10 @@
         <span>Mode: Auto-spin</span>
       </div>
       <p class="small">
-        Add your token in the URL with <code>?token=YOUR_MAPBOX_TOKEN</code>,
-        or enter it below. It will be saved to localStorage. When opened as a
-        local file, a built-in Mars texture is used. Run the local server for
-        the live USGS tiles.
+        This build pulls the Mapbox public token from the server. When opened as
+        a local file, a built-in Mars texture is used. Run the local server or a
+        hosted build to see the live USGS tiles.
       </p>
-      <form id="token-form" class="token-form">
-        <input
-          id="token-input"
-          type="password"
-          placeholder="Mapbox public token (pk.*)"
-          autocomplete="off"
-        />
-        <button type="submit">Save token</button>
-      </form>
       <p id="token-status" class="small"></p>
     </div>
 
