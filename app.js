@@ -4,7 +4,7 @@ const useMapboxStandard = mode === 'earth';
 const HARDCODED_TOKEN =
   'pk.eyJ1Ijoia2llcmFubWNjYW5uIiwiYSI6ImNtbHVieWExbDAweHYza3B3MzZsOG81YjUifQ.w61Q4cg-CEH-ZI2MGExlJA';
 
-const marsRasterTiles = ['/api/mars/{z}/{y}/{x}'];
+const MARS_TILESET = 'mapbox://kieranmccann.mars-mola';
 
 const isFileProtocol = window.location.protocol === 'file:';
 
@@ -72,7 +72,7 @@ const marsSources = isFileProtocol
   : {
       mars: {
         type: 'raster',
-        tiles: marsRasterTiles,
+        url: MARS_TILESET,
         tileSize: 256,
         attribution:
           'Mars shaded relief: USGS Astrogeology Science Center / NASA MGS MOLA'

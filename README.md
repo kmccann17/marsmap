@@ -26,6 +26,11 @@ Then open:
   `https://planetarymaps.usgs.gov/arcgis/rest/services/Mars/Mars_MGS_MOLA_ClrShade_merge_global_463m/MapServer`
   (proxied through `/api/mars/{z}/{y}/{x}` to avoid CORS issues)
 
+## Mapbox tileset
+
+Mars mode uses the Mapbox raster tileset `kieranmccann.mars-mola`.
+Make sure the tileset is **public** so it can be loaded in the browser.
+
 ## Build Mars PMTiles (GDAL)
 
 This repo includes a script to generate a Mars PMTiles file from the USGS
